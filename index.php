@@ -162,7 +162,7 @@ require_once("templates/top.php"); ?>
           <div class="icon"><i class="bi bi-geo-alt"></i></div>
           <div class="body-content">
             <div class="heading">Alamat</div>
-            ALKANI DESA ALKANI KEC. WEWIKU - MALAKA, Kab. Belu, Nusa Tenggara Timur
+            ALKANI DESA ALKANI KEC. WEWIKU - MALAKA, Nusa Tenggara Timur
           </div>
         </div>
       </div>
