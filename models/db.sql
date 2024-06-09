@@ -1,0 +1,146 @@
+-- Active: 1711937588478@@127.0.0.1@3306@mitra_agung_malaka
+CREATE TABLE auth(
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  image VARCHAR(50),
+  bg VARCHAR(35)
+);
+
+CREATE TABLE user_role(
+  id_role INT AUTO_INCREMENT PRIMARY KEY,
+  role VARCHAR(35)
+);
+
+INSERT INTO
+  user_role(role)
+VALUES
+  ('Administrator'),
+  ('Owner'),
+  ('Member');
+
+CREATE TABLE user_status(
+  id_status INT AUTO_INCREMENT PRIMARY KEY,
+  status VARCHAR(35)
+);
+
+INSERT INTO
+  user_status(status)
+VALUES
+  ('Active'),
+  ('No Active');
+
+CREATE TABLE users(
+  id_user INT AUTO_INCREMENT PRIMARY KEY,
+  id_role INT,
+  id_active INT,
+  en_user VARCHAR(75),
+  token CHAR(6),
+  name VARCHAR(100),
+  image VARCHAR(100),
+  email VARCHAR(75),
+  password VARCHAR(100),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (id_role) REFERENCES user_role(id_role) ON UPDATE NO ACTION ON DELETE NO ACTION,
+  FOREIGN KEY (id_active) REFERENCES user_status(id_active) ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+CREATE TABLE user_menu(
+  id_menu INT AUTO_INCREMENT PRIMARY KEY,
+  menu VARCHAR(50)
+);
+
+CREATE TABLE user_sub_menu(
+  id_sub_menu INT AUTO_INCREMENT PRIMARY KEY,
+  id_menu INT,
+  id_active INT,
+  title VARCHAR(50),
+  url VARCHAR(50),
+  icon VARCHAR(50),
+  FOREIGN KEY (id_menu) REFERENCES user_menu(id_menu) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (id_active) REFERENCES user_status(id_active) ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+CREATE TABLE user_access_menu(
+  id_access_menu INT AUTO_INCREMENT PRIMARY KEY,
+  id_role INT,
+  id_menu INT,
+  FOREIGN KEY (id_role) REFERENCES user_role(id_role) ON UPDATE NO ACTION ON DELETE NO ACTION,
+  FOREIGN KEY (id_menu) REFERENCES user_menu(id_menu) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE user_access_sub_menu(
+  id_access_sub_menu INT AUTO_INCREMENT PRIMARY KEY,
+  id_role INT,
+  id_sub_menu INT,
+  FOREIGN KEY (id_role) REFERENCES user_role(id_role) ON UPDATE NO ACTION ON DELETE NO ACTION,
+  FOREIGN KEY (id_sub_menu) REFERENCES user_sub_menu(id_sub_menu) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE bahan_material(
+  id_bm INT AUTO_INCREMENT PRIMARY KEY,
+  nama_material VARCHAR(50),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE status_stok(
+  id_ss INT AUTO_INCREMENT PRIMARY KEY,
+  status VARCHAR(35)
+);
+
+CREATE TABLE satuan_barang(
+  id_sb INT AUTO_INCREMENT PRIMARY KEY,
+  satuan_barang VARCHAR(35)
+);
+
+CREATE TABLE stok_material(
+  id_sm INT AUTO_INCREMENT PRIMARY KEY,
+  id_bm INT,
+  id_ss INT,
+  id_sb INT,
+  jumlah CHAR(20),
+  biaya_satuan CHAR(20),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (id_bm) REFERENCES bahan_material(id_bm) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (id_ss) REFERENCES status_stok(id_ss) ON UPDATE CASCADE ON DELETE NO ACTION,
+  FOREIGN KEY (id_sb) REFERENCES satuan_barang(id_sb) ON UPDATE CASCADE ON DELETE NO ACTION
+);
+
+CREATE TABLE status_keluar(
+  id_sk INT AUTO_INCREMENT PRIMARY KEY,
+  status_keluar VARCHAR(35),
+  progress INT
+);
+
+CREATE TABLE material_keluar(
+  id_mk INT AUTO_INCREMENT PRIMARY KEY,
+  id_sm INT,
+  id_sk INT,
+  nama_pemesan VARCHAR(50),
+  no_telp VARCHAR(12),
+  alamat_pengiriman VARCHAR(100),
+  jumlah_keluar CHAR(20),
+  biaya CHAR(20),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (id_sm) REFERENCES stok_material(id_sm) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (id_sk) REFERENCES status_keluar(id_sk) ON UPDATE CASCADE ON DELETE NO ACTION
+);
+
+CREATE TABLE kontak (
+  id_kontak INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(75),
+  email VARCHAR(50),
+  phone CHAR(12),
+  pesan TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tentang(
+  id_tentang INT AUTO_INCREMENT PRIMARY KEY,
+  deskripsi TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
