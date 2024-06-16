@@ -42,6 +42,18 @@ if (isset($_POST["edit_stok_material"])) {
     exit();
   }
 }
+if (isset($_POST["export_stok_material"])) {
+	$validated_post = array_map(function ($value) use ($conn) {
+		return valid($conn, $value);
+	}, $_POST);
+	if (stok_material($conn, $validated_post, $action = 'export') > 0) {
+		$message = "Data stok material berhasil di export.";
+		$message_type = "success";
+		alert($message, $message_type);
+		header("Location: stok-material");
+		exit();
+	}
+}
 if (isset($_POST["delete_stok_material"])) {
   $validated_post = array_map(function ($value) use ($conn) {
     return valid($conn, $value);

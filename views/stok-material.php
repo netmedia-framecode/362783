@@ -8,9 +8,12 @@ require_once("../templates/views_top.php"); ?>
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800"><?= $_SESSION["project_mitra_agung_malaka"]["name_page"] ?></h1>
-    <?php if ($id_role == 1 || $id_role == 2) { ?>
-      <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#tambah"><i class="bi bi-plus-lg"></i> Tambah</a>
-    <?php } ?>
+    <div class="div">
+      <?php if ($id_role == 1 || $id_role == 2) { ?>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#tambah"><i class="bi bi-plus-lg"></i> Tambah</a>
+      <?php } ?>
+      <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm" data-toggle="modal" data-target="#export"><i class="bi bi-download"></i> Export</a>
+    </div>
   </div>
 
   <div class="card shadow mb-4 border-0">
@@ -223,6 +226,35 @@ require_once("../templates/views_top.php"); ?>
           <div class="modal-footer justify-content-center border-top-0">
             <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
             <button type="submit" name="add_stok_material" class="btn btn-primary btn-sm">Tambah</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="export" tabindex="-1" aria-labelledby="exportLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header border-bottom-0 shadow">
+          <h5 class="modal-title" id="exportLabel">Export Stok Material</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="" method="post" enctype="multipart/form-data">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="format_file">Format</label>
+              <select name="format_file" id="format_file" class="form-select form-control" required>
+                <option selected value="">Pilih Format</option>
+                <option value="pdf">PDF</option>
+                <option value="excel">Excel</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center border-top-0">
+            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+            <button type="submit" name="export_stok_material" class="btn btn-primary btn-sm">Export</button>
           </div>
         </form>
       </div>

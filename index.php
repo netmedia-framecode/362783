@@ -4,7 +4,7 @@ require_once("templates/top.php"); ?>
 <div id="slides" class="section banner">
   <ul class="slides-container">
     <li>
-      <img src="assets/img/banner-page.jpg" alt="">
+      <img src="assets/img/banner.jpg" alt="">
       <div class="overlay-bg"></div>
       <div class="container">
         <div class="wrap-caption">
@@ -80,12 +80,12 @@ require_once("templates/top.php"); ?>
         <div class="about-img">
           <div class="about-img-top">
             <div class="hover-img">
-              <img src="assets/img/about-img-2.jpg" alt="" class="img-responsive">
+              <img src="assets/img/about-2.jpg" alt="" class="img-responsive">
             </div>
           </div>
           <div class="about-img-bottom">
             <div class="hover-img">
-              <img src="assets/img/about-img-1.jpg" alt="" class="img-responsive">
+              <img src="assets/img/about-1.jpg" alt="" class="img-responsive">
             </div>
           </div>
         </div>

@@ -83,6 +83,190 @@ require_once("../templates/views_top.php"); ?>
 
   <div class="row">
 
+    <!-- Chart Line -->
+    <div class="col-xl-8 col-lg-7">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Pendapatan</h6>
+          <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="stok-material">Stok Material</a>
+              <a class="dropdown-item" href="material-keluar">Material Keluar</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="chart-area">
+            <?php
+            $chart_material_keluar = "SELECT 
+                        MONTH(material_keluar.created_at) as bulan,
+                        SUM(material_keluar.jumlah_keluar) as total_material_keluar,
+                        SUM(material_keluar.biaya) as total_pendapatan
+                        FROM material_keluar 
+                        JOIN stok_material ON material_keluar.id_sm = stok_material.id_sm 
+                        JOIN bahan_material ON stok_material.id_bm = bahan_material.id_bm 
+                        GROUP BY MONTH(material_keluar.created_at)";
+            $view_chart_material_keluar = mysqli_query($conn, $chart_material_keluar);
+            $bulan = [];
+            $total_material_keluar = [];
+            $total_pendapatan = [];
+            while ($row = mysqli_fetch_assoc($view_chart_material_keluar)) {
+              $bulan[] = $row['bulan'];
+              $total_material_keluar[] = $row['total_material_keluar'];
+              $total_pendapatan[] = $row['total_pendapatan'];
+            }
+            ?>
+            <canvas id="chartMaterialKeluar"></canvas>
+            <script>
+              var bulan = <?php echo json_encode($bulan); ?>;
+              var total_material_keluar = <?php echo json_encode($total_material_keluar); ?>;
+              var total_pendapatan = <?php echo json_encode($total_pendapatan); ?>;
+              var bulanLabels = bulan.map(function(item) {
+                const bulanNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                return bulanNames[item - 1];
+              });
+              var ctx = document.getElementById('chartMaterialKeluar').getContext('2d');
+              var myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                  labels: bulanLabels,
+                  datasets: [{
+                      label: 'Total Material Keluar',
+                      data: total_material_keluar,
+                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                      borderColor: 'rgba(75, 192, 192, 1)',
+                      borderWidth: 1
+                    },
+                    {
+                      label: 'Total Pendapatan',
+                      data: total_pendapatan,
+                      backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                      borderColor: 'rgba(153, 102, 255, 1)',
+                      borderWidth: 1
+                    }
+                  ]
+                },
+                options: {
+                  scales: {
+                    y: {
+                      beginAtZero: true
+                    }
+                  }
+                }
+              });
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Pie -->
+    <div class="col-xl-4 col-lg-5">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Bahan Material</h6>
+          <div class="dropdown no-arrow">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="bahan-material">List Material</a>
+              <a class="dropdown-item" href="stok-material">Detail Material</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="chart-pie pt-4 pb-2">
+            <?php
+            $chart_stok_material = "SELECT bahan_material.nama_material, stok_material.jumlah
+                                            FROM stok_material
+                                            JOIN bahan_material ON stok_material.id_bm = bahan_material.id_bm";
+            $view_chart_stok_material = mysqli_query($conn, $chart_stok_material);
+            if (!$view_chart_stok_material) {
+              die("Query gagal: " . mysqli_error($conn));
+            }
+            $data = array();
+            while ($row = mysqli_fetch_assoc($view_chart_stok_material)) {
+              $data[] = $row;
+            }
+            $labels = array();
+            $jumlah_stok = array();
+            foreach ($data as $item) {
+              $labels[] = $item['nama_material'];
+              $jumlah_stok[] = $item['jumlah'];
+            }
+            $labels_json = json_encode($labels);
+            $jumlah_stok_json = json_encode($jumlah_stok);
+            ?>
+            <canvas id="pieStokMaterial"></canvas>
+            <script>
+              const labels = <?php echo $labels_json; ?>;
+              const data = <?php echo $jumlah_stok_json; ?>;
+              const backgroundColors = [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+              ];
+              const borderColors = [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+              ];
+              const pieCtx = document.getElementById('pieStokMaterial').getContext('2d');
+              const myPieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      position: 'top',
+                    },
+                    tooltip: {
+                      callbacks: {
+                        label: function(tooltipItem) {
+                          return labels[tooltipItem.dataIndex] + ': ' + data[tooltipItem.dataIndex];
+                        }
+                      }
+                    }
+                  }
+                }
+              });
+              var legendHtml = '';
+              labels.forEach((label, index) => {
+                legendHtml += `<span class="mr-2">
+                                            <i class="fas fa-circle" style="color:${borderColors[index]}"></i> ${label}
+                                           </span>`;
+              });
+              document.getElementById('legendPieChart').innerHTML = legendHtml;
+            </script>
+          </div>
+          <div id="legendPieChart" class="mt-4 text-center small"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+
     <?php if ($id_role == 1 || $id_role == 2) { ?>
       <div class="col-xl-4 col-lg-5">
         <div class="card shadow mb-4">

@@ -5,6 +5,7 @@ error_reporting(~E_NOTICE & ~E_DEPRECATED);
 require_once("Database.php");
 require_once("Mail.php");
 require_once(__DIR__ . "/../models/sql.php");
+require_once(__DIR__ . "/../assets/vendor/autoload.php");
 require_once(__DIR__ . "/../controller/Functions.php");
 
 $baseURL = "http://$_SERVER[HTTP_HOST]/apps/tugas/mitra_agung_malaka/";

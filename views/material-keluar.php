@@ -8,7 +8,10 @@ require_once("../templates/views_top.php"); ?>
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800"><?= $_SESSION["project_mitra_agung_malaka"]["name_page"] ?></h1>
-    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#tambah"><i class="bi bi-plus-lg"></i> Tambah</a>
+    <div class="div">
+      <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target="#tambah"><i class="bi bi-plus-lg"></i> Tambah</a>
+      <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm" data-toggle="modal" data-target="#export"><i class="bi bi-download"></i> Export</a>
+    </div>
   </div>
 
   <div class="card shadow mb-4 border-0">
@@ -69,7 +72,7 @@ require_once("../templates/views_top.php"); ?>
                     echo date_format($created_at, "d M Y"); ?></td>
                 <td><?php $updated_at = date_create($data["updated_at"]);
                     echo date_format($updated_at, "d M Y"); ?></td>
-                <?php if ($id_role == 1 || $id_role == 2) { ?>
+                <?php if ($id_role == 1 || $id_role == 2 || $id_role == 4) { ?>
                   <td class="text-center">
                     <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ubah<?= $data['id_mk'] ?>">
                       <i class="bi bi-pencil-square"></i> Ubah
@@ -126,34 +129,36 @@ require_once("../templates/views_top.php"); ?>
                         </div>
                       </div>
                     </div>
-                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#hapus<?= $data['id_mk'] ?>">
-                      <i class="bi bi-trash3"></i> Hapus
-                    </button>
-                    <div class="modal fade" id="hapus<?= $data['id_mk'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="modal-header border-bottom-0 shadow">
-                            <h5 class="modal-title" id="exampleModalLabel">Hapus <?= $data['nama_material'] ?></h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
+                    <?php if ($data['progress'] != 100) { ?>
+                      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#hapus<?= $data['id_mk'] ?>">
+                        <i class="bi bi-trash3"></i> Hapus
+                      </button>
+                      <div class="modal fade" id="hapus<?= $data['id_mk'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header border-bottom-0 shadow">
+                              <h5 class="modal-title" id="exampleModalLabel">Hapus <?= $data['nama_material'] ?></h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <form action="" method="post">
+                              <input type="hidden" name="id_mk" value="<?= $data['id_mk'] ?>">
+                              <input type="hidden" name="id_sm" value="<?= $data['id_sm'] ?>">
+                              <input type="hidden" name="nama_material" value="<?= $data['nama_material'] ?>">
+                              <input type="hidden" name="jumlah_keluar" value="<?= $data['jumlah_keluar'] ?>">
+                              <div class="modal-body">
+                                <p>Jika anda yakin ingin menghapus data ini, klik Hapus!</p>
+                              </div>
+                              <div class="modal-footer justify-content-center border-top-0">
+                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                                <button type="submit" name="delete_material_keluar" class="btn btn-danger btn-sm">hapus</button>
+                              </div>
+                            </form>
                           </div>
-                          <form action="" method="post">
-                            <input type="hidden" name="id_mk" value="<?= $data['id_mk'] ?>">
-                            <input type="hidden" name="id_sm" value="<?= $data['id_sm'] ?>">
-                            <input type="hidden" name="nama_material" value="<?= $data['nama_material'] ?>">
-                            <input type="hidden" name="jumlah_keluar" value="<?= $data['jumlah_keluar'] ?>">
-                            <div class="modal-body">
-                              <p>Jika anda yakin ingin menghapus data ini, klik Hapus!</p>
-                            </div>
-                            <div class="modal-footer justify-content-center border-top-0">
-                              <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
-                              <button type="submit" name="delete_material_keluar" class="btn btn-danger btn-sm">hapus</button>
-                            </div>
-                          </form>
                         </div>
                       </div>
-                    </div>
+                    <?php } ?>
                   </td>
                 <?php } ?>
               </tr>
@@ -213,6 +218,35 @@ require_once("../templates/views_top.php"); ?>
           <div class="modal-footer justify-content-center border-top-0">
             <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
             <button type="submit" name="add_material_keluar" class="btn btn-primary btn-sm">Tambah</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="export" tabindex="-1" aria-labelledby="exportLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header border-bottom-0 shadow">
+          <h5 class="modal-title" id="exportLabel">Export Material Keluar</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="" method="post" enctype="multipart/form-data">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="format_file">Format</label>
+              <select name="format_file" id="format_file" class="form-select form-control" required>
+                <option selected value="">Pilih Format</option>
+                <option value="pdf">PDF</option>
+                <option value="excel">Excel</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center border-top-0">
+            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+            <button type="submit" name="export_material_keluar" class="btn btn-primary btn-sm">Export</button>
           </div>
         </form>
       </div>

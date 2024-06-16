@@ -27,3 +27,4 @@
 <script src="<?= $baseURL ?>assets/sweetalert/dist/sweetalert2.all.min.js"></script>
 
 <script src="<?= $baseURL; ?>assets/ckeditor/ckeditor.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

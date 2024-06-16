@@ -1024,6 +1024,64 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
     return mysqli_affected_rows($conn);
   }
 
+  function exportBMToPDF($conn)
+  {
+    $query = "SELECT * FROM bahan_material";
+    $result = mysqli_query($conn, $query);
+    $mpdf = new \Mpdf\Mpdf();
+    $html = '<h1 style="text-align: center;">DATA BAHAN MATERIAL PT MITRA AGUNG MALAKA</h1>';
+    $html .= '<table border="1" cellspacing="0" cellpadding="5">
+                <tr>
+                  <th>No</th>
+                  <th>Nama Material</th>
+                </tr>';
+    $no = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
+      $html .= '<tr>
+                    <td>' . $no++ . '</td>
+                    <td>' . $row['nama_material'] . '</td>
+                 </tr>';
+    }
+    $html .= '</table>';
+    $mpdf->WriteHTML($html);
+    $mpdf->Output('data_bahan_material_pt_mitra_agung_malaka.pdf', 'D');
+  }
+
+  function exportBMToExcel($conn)
+  {
+    $query = "SELECT * FROM bahan_material";
+    $result = mysqli_query($conn, $query);
+    $spreadsheet = new PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $spreadsheet->getProperties()->setCreator('Creator')
+      ->setLastModifiedBy('Last Modified By')
+      ->setTitle('Data Bahan Material')
+      ->setSubject('Data Bahan Material')
+      ->setDescription('Data Bahan Material')
+      ->setKeywords('Data Bahan Material')
+      ->setCategory('Data');
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setCellValue('A1', 'No');
+    $sheet->setCellValue('B1', 'Nama Material');
+    $row = 2;
+    $no = 1;
+    while ($row_data = mysqli_fetch_assoc($result)) {
+      $sheet->setCellValue('A' . $row, $no);
+      $sheet->setCellValue('B' . $row, $row_data['nama_material']);
+      $row++;
+      $no++;
+    }
+    foreach (range('A', 'E') as $column) {
+      $sheet->getColumnDimension($column)->setAutoSize(true);
+    }
+    $writer = new PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+    $filename = 'data_bahan_material.xlsx';
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="' . $filename . '"');
+    header('Cache-Control: max-age=0');
+    $writer->save('php://output');
+    exit;
+  }
+
   function bahan_material($conn, $data, $action)
   {
     if ($action == "insert") {
@@ -1034,12 +1092,102 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
       $sql = "UPDATE bahan_material SET nama_material='$data[nama_material]' WHERE id_bm='$data[id_bm]'";
     }
 
+    if ($action == "export") {
+      if ($data['format_file'] === "pdf") {
+        exportBMToPDF($conn);
+      } else if ($data['format_file'] === "excel") {
+        exportBMToExcel($conn);
+      }
+    }
+
     if ($action == "delete") {
       $sql = "DELETE FROM bahan_material WHERE id_bm='$data[id_bm]'";
     }
 
     mysqli_query($conn, $sql);
     return mysqli_affected_rows($conn);
+  }
+
+  function exportSMToPDF($conn)
+  {
+    $query = "SELECT stok_material.*, bahan_material.nama_material, status_stok.status, satuan_barang.satuan_barang
+      FROM stok_material 
+      JOIN bahan_material ON stok_material.id_bm = bahan_material.id_bm 
+      JOIN status_stok ON stok_material.id_ss = status_stok.id_ss 
+      JOIN satuan_barang ON stok_material.id_sb = satuan_barang.id_sb";
+    $result = mysqli_query($conn, $query);
+    $mpdf = new \Mpdf\Mpdf();
+    $html = '<h1 style="text-align: center;">DATA STOK MATERIAL PT MITRA AGUNG MALAKA</h1>';
+    $html .= '<table border="1" cellspacing="0" cellpadding="5">
+                <tr>
+                  <th>No</th>
+                  <th>Nama Material</th>
+                  <th>Status</th>
+                  <th>Jumlah Stok</th>
+                  <th>Satuan</th>
+                  <th>Biaya (per satuan)</th>
+                </tr>';
+    $no = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
+      $html .= '<tr>
+                    <td>' . $no++ . '</td>
+                    <td>' . $row['nama_material'] . '</td>
+                    <td>' . $row['status'] . '</td>
+                    <td>' . $row['jumlah'] . '</td>
+                    <td>' . $row['satuan_barang'] . '</td>
+                    <td>Rp. ' . number_format($row['biaya_satuan']) . '</td>
+                 </tr>';
+    }
+    $html .= '</table>';
+    $mpdf->WriteHTML($html);
+    $mpdf->Output('data_stok_material_pt_mitra_agung_malaka.pdf', 'D');
+  }
+
+  function exportSMToExcel($conn)
+  {
+    $query = "SELECT stok_material.*, bahan_material.nama_material, status_stok.status, satuan_barang.satuan_barang
+      FROM stok_material 
+      JOIN bahan_material ON stok_material.id_bm = bahan_material.id_bm 
+      JOIN status_stok ON stok_material.id_ss = status_stok.id_ss 
+      JOIN satuan_barang ON stok_material.id_sb = satuan_barang.id_sb";
+    $result = mysqli_query($conn, $query);
+    $spreadsheet = new PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $spreadsheet->getProperties()->setCreator('Creator')
+      ->setLastModifiedBy('Last Modified By')
+      ->setTitle('Data Stok Material')
+      ->setSubject('Data Stok Material')
+      ->setDescription('Data Stok Material')
+      ->setKeywords('Data Stok Material')
+      ->setCategory('Data');
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setCellValue('A1', 'No');
+    $sheet->setCellValue('B1', 'Nama Material');
+    $sheet->setCellValue('C1', 'Status');
+    $sheet->setCellValue('D1', 'Jumlah Stok');
+    $sheet->setCellValue('E1', 'Satuan');
+    $sheet->setCellValue('F1', 'Biaya (per satuan)');
+    $row = 2;
+    $no = 1;
+    while ($row_data = mysqli_fetch_assoc($result)) {
+      $sheet->setCellValue('A' . $row, $no);
+      $sheet->setCellValue('B' . $row, $row_data['nama_material']);
+      $sheet->setCellValue('C' . $row, $row_data['status']);
+      $sheet->setCellValue('D' . $row, $row_data['jumlah']);
+      $sheet->setCellValue('E' . $row, $row_data['nama_material']);
+      $sheet->setCellValue('F' . $row, number_format($row_data['biaya_satuan']));
+      $row++;
+      $no++;
+    }
+    foreach (range('A', 'E') as $column) {
+      $sheet->getColumnDimension($column)->setAutoSize(true);
+    }
+    $writer = new PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+    $filename = 'data_stok_material.xlsx';
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="' . $filename . '"');
+    header('Cache-Control: max-age=0');
+    $writer->save('php://output');
+    exit;
   }
 
   function stok_material($conn, $data, $action)
@@ -1052,12 +1200,119 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
       $sql = "UPDATE stok_material SET id_bm='$data[id_bm]', id_ss='$data[id_ss]', id_sb='$data[id_sb]', jumlah='$data[jumlah]', biaya_satuan='$data[biaya_satuan]' WHERE id_sm='$data[id_sm]'";
     }
 
+    if ($action == "export") {
+      if ($data['format_file'] === "pdf") {
+        exportSMToPDF($conn);
+      } else if ($data['format_file'] === "excel") {
+        exportSMToExcel($conn);
+      }
+    }
+
     if ($action == "delete") {
       $sql = "DELETE FROM stok_material WHERE id_sm='$data[id_sm]'";
     }
 
     mysqli_query($conn, $sql);
     return mysqli_affected_rows($conn);
+  }
+
+  function exportMKToPDF($conn)
+  {
+    $query = "SELECT material_keluar.*, status_keluar.status_keluar, status_keluar.progress, bahan_material.nama_material, status_stok.status, satuan_barang.satuan_barang
+      FROM material_keluar 
+      JOIN stok_material ON material_keluar.id_sm = stok_material.id_sm 
+      JOIN status_keluar ON material_keluar.id_sk = status_keluar.id_sk 
+      JOIN bahan_material ON stok_material.id_bm = bahan_material.id_bm 
+      JOIN status_stok ON stok_material.id_ss = status_stok.id_ss 
+      JOIN satuan_barang ON stok_material.id_sb = satuan_barang.id_sb 
+      ORDER BY material_keluar.id_mk DESC";
+    $result = mysqli_query($conn, $query);
+    $mpdf = new \Mpdf\Mpdf();
+    $html = '<h1 style="text-align: center;">DATA MATERIAL KELUAR PT MITRA AGUNG MALAKA</h1>';
+    $html .= '<table border="1" cellspacing="0" cellpadding="5">
+                <tr>
+                  <th>No</th>
+                  <th>Nama Material</th>
+                  <th>Status</th>
+                  <th>Nama Pemesan</th>
+                  <th>No. Telp</th>
+                  <th>Alamat Pengiriman</th>
+                  <th>Jumlah Keluar</th>
+                  <th>Biaya</th>
+                </tr>';
+    $no = 1;
+    while ($row = mysqli_fetch_assoc($result)) {
+      $html .= '<tr>
+                    <td>' . $no++ . '</td>
+                    <td>' . $row['nama_material'] . '</td>
+                    <td>
+                      <p>' . $row['status_keluar'] . '</p>
+                      <p>Progress : ' . $row['progress'] . '%</p>
+                    </td>
+                    <td>' . $row['nama_pemesan'] . '</td>
+                    <td>' . $row['no_telp'] . '</td>
+                    <td>' . $row['alamat_pengiriman'] . '</td>
+                    <td>' . $row['jumlah_keluar'] . ' ' . $row['satuan_barang'] . '</td>
+                    <td>Rp. ' . number_format($row['biaya']) . '</td>
+                 </tr>';
+    }
+    $html .= '</table>';
+    $mpdf->WriteHTML($html);
+    $mpdf->Output('data_material_keluar_pt_mitra_agung_malaka.pdf', 'D');
+  }
+
+  function exportMKToExcel($conn)
+  {
+    $query = "SELECT material_keluar.*, status_keluar.status_keluar, status_keluar.progress, bahan_material.nama_material, status_stok.status, satuan_barang.satuan_barang
+      FROM material_keluar 
+      JOIN stok_material ON material_keluar.id_sm = stok_material.id_sm 
+      JOIN status_keluar ON material_keluar.id_sk = status_keluar.id_sk 
+      JOIN bahan_material ON stok_material.id_bm = bahan_material.id_bm 
+      JOIN status_stok ON stok_material.id_ss = status_stok.id_ss 
+      JOIN satuan_barang ON stok_material.id_sb = satuan_barang.id_sb 
+      ORDER BY material_keluar.id_mk DESC";
+    $result = mysqli_query($conn, $query);
+    $spreadsheet = new PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $spreadsheet->getProperties()->setCreator('Creator')
+      ->setLastModifiedBy('Last Modified By')
+      ->setTitle('Data Material Keluar')
+      ->setSubject('Data Material Keluar')
+      ->setDescription('Data Material Keluar')
+      ->setKeywords('Data Material Keluar')
+      ->setCategory('Data');
+    $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setCellValue('A1', 'No');
+    $sheet->setCellValue('B1', 'Nama Material');
+    $sheet->setCellValue('C1', 'Status');
+    $sheet->setCellValue('D1', 'Nama Pemesan');
+    $sheet->setCellValue('E1', 'No. Telp');
+    $sheet->setCellValue('F1', 'Alamat Pengiriman');
+    $sheet->setCellValue('G1', 'Jumlah Keluar');
+    $sheet->setCellValue('H1', 'Biaya');
+    $row = 2;
+    $no = 1;
+    while ($row_data = mysqli_fetch_assoc($result)) {
+      $sheet->setCellValue('A' . $row, $no);
+      $sheet->setCellValue('B' . $row, $row_data['nama_material']);
+      $sheet->setCellValue('C' . $row, $row_data['status_keluar'] . ". Progress : " . $row_data['progress'] . "%");
+      $sheet->setCellValue('D' . $row, $row_data['nama_pemesan']);
+      $sheet->setCellValue('E' . $row, $row_data['no_telp']);
+      $sheet->setCellValue('F' . $row, $row_data['alamat_pengiriman']);
+      $sheet->setCellValue('G' . $row, $row_data['jumlah_keluar'] . ' ' . $row_data['satuan_barang']);
+      $sheet->setCellValue('H' . $row, number_format($row_data['biaya']));
+      $row++;
+      $no++;
+    }
+    foreach (range('A', 'E') as $column) {
+      $sheet->getColumnDimension($column)->setAutoSize(true);
+    }
+    $writer = new PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+    $filename = 'data_material_keluar.xlsx';
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="' . $filename . '"');
+    header('Cache-Control: max-age=0');
+    $writer->save('php://output');
+    exit;
   }
 
   function material_keluar($conn, $data, $action)
@@ -1115,6 +1370,14 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
           $sql = "UPDATE material_keluar SET id_sk='$data[id_sk]', nama_pemesan='$data[nama_pemesan]', no_telp='$data[no_telp]', alamat_pengiriman='$data[alamat_pengiriman]', jumlah_keluar='$jumlah_keluar', biaya='$biaya' WHERE id_mk='$id_mk'";
           mysqli_query($conn, $sql);
         }
+      }
+    }
+
+    if ($action == "export") {
+      if ($data['format_file'] === "pdf") {
+        exportMKToPDF($conn);
+      } else if ($data['format_file'] === "excel") {
+        exportMKToExcel($conn);
       }
     }
 

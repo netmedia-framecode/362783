@@ -30,6 +30,18 @@ if (isset($_POST["edit_bahan_material"])) {
     exit();
   }
 }
+if (isset($_POST["export_bahan_material"])) {
+	$validated_post = array_map(function ($value) use ($conn) {
+		return valid($conn, $value);
+	}, $_POST);
+	if (bahan_material($conn, $validated_post, $action = 'export') > 0) {
+		$message = "Data bahan material berhasil di export.";
+		$message_type = "success";
+		alert($message, $message_type);
+		header("Location: bahan-material");
+		exit();
+	}
+}
 if (isset($_POST["delete_bahan_material"])) {
   $validated_post = array_map(function ($value) use ($conn) {
     return valid($conn, $value);
