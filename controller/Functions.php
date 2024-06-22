@@ -1024,6 +1024,24 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
     return mysqli_affected_rows($conn);
   }
 
+  function sopir($conn, $data, $action)
+  {
+    if ($action == "insert") {
+      $sql = "INSERT INTO sopir(nama_sopir,no_plat) VALUES('$data[nama_sopir]','$data[no_plat]')";
+    }
+
+    if ($action == "update") {
+      $sql = "UPDATE sopir SET nama_sopir='$data[nama_sopir]', no_plat='$data[no_plat]' WHERE id_sopir='$data[id_sopir]'";
+    }
+
+    if ($action == "delete") {
+      $sql = "DELETE FROM sopir WHERE id_sopir='$data[id_sopir]'";
+    }
+
+    mysqli_query($conn, $sql);
+    return mysqli_affected_rows($conn);
+  }
+
   function exportBMToPDF($conn)
   {
     $query = "SELECT * FROM bahan_material";
@@ -1192,10 +1210,6 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
 
   function stok_material($conn, $data, $action)
   {
-    if ($action == "insert") {
-      $sql = "INSERT INTO stok_material(id_bm,id_ss,id_sb,jumlah,biaya_satuan) VALUES('$data[id_bm]','$data[id_ss]','$data[id_sb]','$data[jumlah]','$data[biaya_satuan]')";
-    }
-
     if ($action == "update") {
       $sql = "UPDATE stok_material SET id_bm='$data[id_bm]', id_ss='$data[id_ss]', id_sb='$data[id_sb]', jumlah='$data[jumlah]', biaya_satuan='$data[biaya_satuan]' WHERE id_sm='$data[id_sm]'";
     }
@@ -1216,15 +1230,34 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
     return mysqli_affected_rows($conn);
   }
 
+  function material_masuk($conn, $data, $action)
+  {
+    if ($action == "insert") {
+      $sql = "INSERT INTO stok_material(id_bm,id_ss,id_sb,id_sopir,jumlah,biaya_satuan) VALUES('$data[id_bm]','$data[id_ss]','$data[id_sb]','$data[id_sopir]','$data[jumlah]','$data[biaya_satuan]')";
+    }
+
+    if ($action == "update") {
+      $sql = "UPDATE stok_material SET id_sopir='$data[id_sopir]' WHERE id_sm='$data[id_sm]'";
+    }
+
+    if ($action == "delete") {
+      $sql = "DELETE FROM stok_material WHERE id_sm='$data[id_sm]'";
+    }
+
+    mysqli_query($conn, $sql);
+    return mysqli_affected_rows($conn);
+  }
+
   function exportMKToPDF($conn)
   {
-    $query = "SELECT material_keluar.*, status_keluar.status_keluar, status_keluar.progress, bahan_material.nama_material, status_stok.status, satuan_barang.satuan_barang
+    $query = "SELECT material_keluar.*, status_keluar.status_keluar, status_keluar.progress, bahan_material.nama_material, status_stok.status, satuan_barang.satuan_barang, sopir.nama_sopir, sopir.no_plat
       FROM material_keluar 
       JOIN stok_material ON material_keluar.id_sm = stok_material.id_sm 
       JOIN status_keluar ON material_keluar.id_sk = status_keluar.id_sk 
       JOIN bahan_material ON stok_material.id_bm = bahan_material.id_bm 
       JOIN status_stok ON stok_material.id_ss = status_stok.id_ss 
       JOIN satuan_barang ON stok_material.id_sb = satuan_barang.id_sb 
+      JOIN sopir ON material_keluar.id_sopir = sopir.id_sopir 
       ORDER BY material_keluar.id_mk DESC";
     $result = mysqli_query($conn, $query);
     $mpdf = new \Mpdf\Mpdf();
@@ -1232,6 +1265,8 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
     $html .= '<table border="1" cellspacing="0" cellpadding="5">
                 <tr>
                   <th>No</th>
+                  <th>Nama Pengantar</th>
+                  <th>No. Plat Kendaraan</th>
                   <th>Nama Material</th>
                   <th>Status</th>
                   <th>Nama Pemesan</th>
@@ -1244,6 +1279,8 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
     while ($row = mysqli_fetch_assoc($result)) {
       $html .= '<tr>
                     <td>' . $no++ . '</td>
+                    <td>' . $row['nama_sopir'] . '</td>
+                    <td>' . $row['no_plat'] . '</td>
                     <td>' . $row['nama_material'] . '</td>
                     <td>
                       <p>' . $row['status_keluar'] . '</p>
@@ -1263,13 +1300,14 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
 
   function exportMKToExcel($conn)
   {
-    $query = "SELECT material_keluar.*, status_keluar.status_keluar, status_keluar.progress, bahan_material.nama_material, status_stok.status, satuan_barang.satuan_barang
+    $query = "SELECT material_keluar.*, status_keluar.status_keluar, status_keluar.progress, bahan_material.nama_material, status_stok.status, satuan_barang.satuan_barang, sopir.nama_sopir, sopir.no_plat
       FROM material_keluar 
       JOIN stok_material ON material_keluar.id_sm = stok_material.id_sm 
       JOIN status_keluar ON material_keluar.id_sk = status_keluar.id_sk 
       JOIN bahan_material ON stok_material.id_bm = bahan_material.id_bm 
       JOIN status_stok ON stok_material.id_ss = status_stok.id_ss 
       JOIN satuan_barang ON stok_material.id_sb = satuan_barang.id_sb 
+      JOIN sopir ON material_keluar.id_sopir = sopir.id_sopir 
       ORDER BY material_keluar.id_mk DESC";
     $result = mysqli_query($conn, $query);
     $spreadsheet = new PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -1282,24 +1320,28 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
       ->setCategory('Data');
     $sheet = $spreadsheet->getActiveSheet();
     $sheet->setCellValue('A1', 'No');
-    $sheet->setCellValue('B1', 'Nama Material');
-    $sheet->setCellValue('C1', 'Status');
-    $sheet->setCellValue('D1', 'Nama Pemesan');
-    $sheet->setCellValue('E1', 'No. Telp');
-    $sheet->setCellValue('F1', 'Alamat Pengiriman');
-    $sheet->setCellValue('G1', 'Jumlah Keluar');
-    $sheet->setCellValue('H1', 'Biaya');
+    $sheet->setCellValue('B1', 'Nama pengantar');
+    $sheet->setCellValue('C1', 'No. Plat Kendaraan');
+    $sheet->setCellValue('D1', 'Nama Material');
+    $sheet->setCellValue('E1', 'Status');
+    $sheet->setCellValue('F1', 'Nama Pemesan');
+    $sheet->setCellValue('G1', 'No. Telp');
+    $sheet->setCellValue('H1', 'Alamat Pengiriman');
+    $sheet->setCellValue('I1', 'Jumlah Keluar');
+    $sheet->setCellValue('J1', 'Biaya');
     $row = 2;
     $no = 1;
     while ($row_data = mysqli_fetch_assoc($result)) {
       $sheet->setCellValue('A' . $row, $no);
-      $sheet->setCellValue('B' . $row, $row_data['nama_material']);
-      $sheet->setCellValue('C' . $row, $row_data['status_keluar'] . ". Progress : " . $row_data['progress'] . "%");
-      $sheet->setCellValue('D' . $row, $row_data['nama_pemesan']);
-      $sheet->setCellValue('E' . $row, $row_data['no_telp']);
-      $sheet->setCellValue('F' . $row, $row_data['alamat_pengiriman']);
-      $sheet->setCellValue('G' . $row, $row_data['jumlah_keluar'] . ' ' . $row_data['satuan_barang']);
-      $sheet->setCellValue('H' . $row, number_format($row_data['biaya']));
+      $sheet->setCellValue('B' . $row, $row_data['nama_sopir']);
+      $sheet->setCellValue('C' . $row, $row_data['no_plat']);
+      $sheet->setCellValue('D' . $row, $row_data['nama_material']);
+      $sheet->setCellValue('E' . $row, $row_data['status_keluar'] . ". Progress : " . $row_data['progress'] . "%");
+      $sheet->setCellValue('F' . $row, $row_data['nama_pemesan']);
+      $sheet->setCellValue('G' . $row, $row_data['no_telp']);
+      $sheet->setCellValue('H' . $row, $row_data['alamat_pengiriman']);
+      $sheet->setCellValue('I' . $row, $row_data['jumlah_keluar'] . ' ' . $row_data['satuan_barang']);
+      $sheet->setCellValue('J' . $row, number_format($row_data['biaya']));
       $row++;
       $no++;
     }
@@ -1330,7 +1372,7 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
           alert($message, $message_type);
           return false;
         } else {
-          $sql = "INSERT INTO material_keluar(id_sm,id_sk,nama_pemesan,no_telp,alamat_pengiriman,jumlah_keluar,biaya) VALUES('$data[id_sm]','$data[id_sk]','$data[nama_pemesan]','$data[no_telp]','$data[alamat_pengiriman]','$data[jumlah_keluar]','$biaya');";
+          $sql = "INSERT INTO material_keluar(id_sm,id_sk,id_sopir,nama_pemesan,no_telp,alamat_pengiriman,jumlah_keluar,biaya) VALUES('$data[id_sm]','$data[id_sk]','$data[id_sopir]','$data[nama_pemesan]','$data[no_telp]','$data[alamat_pengiriman]','$data[jumlah_keluar]','$biaya');";
           $sql .= "UPDATE stok_material SET jumlah=jumlah-$data[jumlah_keluar] WHERE id_sm='$data[id_sm]';";
           mysqli_multi_query($conn, $sql);
         }
@@ -1352,7 +1394,7 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
           if ($data_sm['jumlah'] >= $jumlah_update) {
             $sql_stok = "UPDATE stok_material SET jumlah = jumlah - $jumlah_update WHERE id_sm='$id_sm'";
             mysqli_query($conn, $sql_stok);
-            $sql = "UPDATE material_keluar SET id_sk='$data[id_sk]', nama_pemesan='$data[nama_pemesan]', no_telp='$data[no_telp]', alamat_pengiriman='$data[alamat_pengiriman]', jumlah_keluar='$jumlah_keluar', biaya='$biaya' WHERE id_mk='$id_mk'";
+            $sql = "UPDATE material_keluar SET id_sk='$data[id_sk]', id_sopir='$data[id_sopir]', nama_pemesan='$data[nama_pemesan]', no_telp='$data[no_telp]', alamat_pengiriman='$data[alamat_pengiriman]', jumlah_keluar='$jumlah_keluar', biaya='$biaya' WHERE id_mk='$id_mk'";
             mysqli_query($conn, $sql);
           } else {
             $message = "Maaf, stok tidak mencukupi untuk pembaruan.";
@@ -1364,10 +1406,10 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
           $jumlah_update = $jumlah_keluarOld - $jumlah_keluar;
           $sql_stok = "UPDATE stok_material SET jumlah = jumlah + $jumlah_update WHERE id_sm='$id_sm'";
           mysqli_query($conn, $sql_stok);
-          $sql = "UPDATE material_keluar SET id_sk='$data[id_sk]', nama_pemesan='$data[nama_pemesan]', no_telp='$data[no_telp]', alamat_pengiriman='$data[alamat_pengiriman]', jumlah_keluar='$jumlah_keluar', biaya='$biaya' WHERE id_mk='$id_mk'";
+          $sql = "UPDATE material_keluar SET id_sk='$data[id_sk]', id_sopir='$data[id_sopir]', nama_pemesan='$data[nama_pemesan]', no_telp='$data[no_telp]', alamat_pengiriman='$data[alamat_pengiriman]', jumlah_keluar='$jumlah_keluar', biaya='$biaya' WHERE id_mk='$id_mk'";
           mysqli_query($conn, $sql);
         } else {
-          $sql = "UPDATE material_keluar SET id_sk='$data[id_sk]', nama_pemesan='$data[nama_pemesan]', no_telp='$data[no_telp]', alamat_pengiriman='$data[alamat_pengiriman]', jumlah_keluar='$jumlah_keluar', biaya='$biaya' WHERE id_mk='$id_mk'";
+          $sql = "UPDATE material_keluar SET id_sk='$data[id_sk]', id_sopir='$data[id_sopir]', nama_pemesan='$data[nama_pemesan]', no_telp='$data[no_telp]', alamat_pengiriman='$data[alamat_pengiriman]', jumlah_keluar='$jumlah_keluar', biaya='$biaya' WHERE id_mk='$id_mk'";
           mysqli_query($conn, $sql);
         }
       }

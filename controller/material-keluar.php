@@ -6,6 +6,8 @@ require_once("../config/Alert.php");
 
 $status_keluar = "SELECT * FROM status_keluar ORDER BY id_sk ASC";
 $view_status_keluar = mysqli_query($conn, $status_keluar);
+$sopir = "SELECT * FROM sopir ORDER BY id_sopir ASC";
+$view_sopir = mysqli_query($conn, $sopir);
 $stok_material = "SELECT stok_material.*, bahan_material.nama_material, status_stok.status, satuan_barang.satuan_barang
   FROM stok_material 
   JOIN bahan_material ON stok_material.id_bm = bahan_material.id_bm 

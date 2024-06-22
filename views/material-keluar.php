@@ -29,7 +29,7 @@ require_once("../templates/views_top.php"); ?>
               <th class="text-center">Biaya</th>
               <th class="text-center">Tgl Masuk</th>
               <th class="text-center">Tgl Ubah</th>
-              <?php if ($id_role == 1 || $id_role == 2) { ?>
+              <?php if ($id_role == 1 || $id_role == 2 || $id_role == 4) { ?>
                 <th class="text-center" style="width: 200px;">Aksi</th>
               <?php } ?>
             </tr>
@@ -45,7 +45,7 @@ require_once("../templates/views_top.php"); ?>
               <th class="text-center">Biaya</th>
               <th class="text-center">Tgl Masuk</th>
               <th class="text-center">Tgl Ubah</th>
-              <?php if ($id_role == 1 || $id_role == 2) { ?>
+              <?php if ($id_role == 1 || $id_role == 2 || $id_role == 4) { ?>
                 <th class="text-center">Aksi</th>
               <?php } ?>
             </tr>
@@ -72,64 +72,75 @@ require_once("../templates/views_top.php"); ?>
                     echo date_format($created_at, "d M Y"); ?></td>
                 <td><?php $updated_at = date_create($data["updated_at"]);
                     echo date_format($updated_at, "d M Y"); ?></td>
-                <?php if ($id_role == 1 || $id_role == 2 || $id_role == 4) { ?>
-                  <td class="text-center">
-                    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ubah<?= $data['id_mk'] ?>">
-                      <i class="bi bi-pencil-square"></i> Ubah
-                    </button>
-                    <div class="modal fade" id="ubah<?= $data['id_mk'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="modal-header border-bottom-0 shadow">
-                            <h5 class="modal-title" id="exampleModalLabel">Ubah <?= $data['nama_material'] ?></h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
+                <?php if ($data['progress'] != 100) {
+                  if ($id_role == 1 || $id_role == 2 || $id_role == 4) { ?>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ubah<?= $data['id_mk'] ?>">
+                        <i class="bi bi-pencil-square"></i> Ubah
+                      </button>
+                      <div class="modal fade" id="ubah<?= $data['id_mk'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header border-bottom-0 shadow">
+                              <h5 class="modal-title" id="exampleModalLabel">Ubah <?= $data['nama_material'] ?></h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <form action="" method="post">
+                              <input type="hidden" name="id_mk" value="<?= $data['id_mk'] ?>">
+                              <input type="hidden" name="id_sm" value="<?= $data['id_sm'] ?>">
+                              <input type="hidden" name="nama_material" value="<?= $data['nama_material'] ?>">
+                              <input type="hidden" name="jumlah_keluarOld" value="<?= $data['jumlah_keluar'] ?>">
+                              <input type="hidden" name="biayaOld" value="<?= $data['biaya'] ?>">
+                              <div class="modal-body">
+                                <div class="form-group">
+                                  <label for="id_sk">Status Keluar</label>
+                                  <select name="id_sk" class="form-control" id="id_sk" required>
+                                    <option value="" selected>Pilih Status Keluar</option>
+                                    <?php $id_sk = $data['id_sk'];
+                                    foreach ($view_status_keluar as $data_select_status_keluar) {
+                                      $selected = ($data_select_status_keluar['id_sk'] == $id_sk) ? 'selected' : ''; ?>
+                                      <option value="<?= $data_select_status_keluar['id_sk'] ?>" <?= $selected ?>><?= $data_select_status_keluar['status_keluar'] ?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="id_sopir">Pengantar</label>
+                                  <select name="id_sopir" class="form-control" id="id_sopir" required>
+                                    <option value="" selected>Pilih Pengantar</option>
+                                    <?php $id_sopir = $data['id_sopir'];
+                                    foreach ($view_sopir as $data_select_sopir) {
+                                      $selected = ($data_select_sopir['id_sopir'] == $id_sopir) ? 'selected' : ''; ?>
+                                      <option value="<?= $data_select_sopir['id_sopir'] ?>" <?= $selected ?>><?= $data_select_sopir['nama_sopir'] ?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="nama_pemesan">Nama Pemesan</label>
+                                  <input type="text" name="nama_pemesan" value="<?= $data['nama_pemesan'] ?>" class="form-control" id="nama_pemesan" minlength="3" required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="no_telp">No. Telp</label>
+                                  <input type="number" name="no_telp" value="<?= $data['no_telp'] ?>" class="form-control" id="no_telp" min="11" required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="alamat_pengiriman">Alamat Pengiriman</label>
+                                  <input type="text" name="alamat_pengiriman" value="<?= $data['alamat_pengiriman'] ?>" class="form-control" id="alamat_pengiriman" minlength="3" required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="jumlah_keluar">Jumlah Material Keluar</label>
+                                  <input type="number" name="jumlah_keluar" value="<?= $data['jumlah_keluar'] ?>" value="1" class="form-control" id="jumlah_keluar" min="1" required>
+                                </div>
+                              </div>
+                              <div class="modal-footer justify-content-center border-top-0">
+                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                                <button type="submit" name="edit_material_keluar" class="btn btn-warning btn-sm">Ubah</button>
+                              </div>
+                            </form>
                           </div>
-                          <form action="" method="post">
-                            <input type="hidden" name="id_mk" value="<?= $data['id_mk'] ?>">
-                            <input type="hidden" name="id_sm" value="<?= $data['id_sm'] ?>">
-                            <input type="hidden" name="nama_material" value="<?= $data['nama_material'] ?>">
-                            <input type="hidden" name="jumlah_keluarOld" value="<?= $data['jumlah_keluar'] ?>">
-                            <input type="hidden" name="biayaOld" value="<?= $data['biaya'] ?>">
-                            <div class="modal-body">
-                              <div class="form-group">
-                                <label for="id_sk">Status Keluar</label>
-                                <select name="id_sk" class="form-control" id="id_sk" required>
-                                  <option value="" selected>Pilih Status Keluar</option>
-                                  <?php $id_sk = $data['id_sk'];
-                                  foreach ($view_status_keluar as $data_select_status_keluar) {
-                                    $selected = ($data_select_status_keluar['id_sk'] == $id_sk) ? 'selected' : ''; ?>
-                                    <option value="<?= $data_select_status_keluar['id_sk'] ?>" <?= $selected ?>><?= $data_select_status_keluar['status_keluar'] ?></option>
-                                  <?php } ?>
-                                </select>
-                              </div>
-                              <div class="form-group">
-                                <label for="nama_pemesan">Nama Pemesan</label>
-                                <input type="text" name="nama_pemesan" value="<?= $data['nama_pemesan'] ?>" class="form-control" id="nama_pemesan" minlength="3" required>
-                              </div>
-                              <div class="form-group">
-                                <label for="no_telp">No. Telp</label>
-                                <input type="number" name="no_telp" value="<?= $data['no_telp'] ?>" class="form-control" id="no_telp" min="11" required>
-                              </div>
-                              <div class="form-group">
-                                <label for="alamat_pengiriman">Alamat Pengiriman</label>
-                                <input type="text" name="alamat_pengiriman" value="<?= $data['alamat_pengiriman'] ?>" class="form-control" id="alamat_pengiriman" minlength="3" required>
-                              </div>
-                              <div class="form-group">
-                                <label for="jumlah_keluar">Jumlah Material Keluar</label>
-                                <input type="number" name="jumlah_keluar" value="<?= $data['jumlah_keluar'] ?>" value="1" class="form-control" id="jumlah_keluar" min="1" required>
-                              </div>
-                            </div>
-                            <div class="modal-footer justify-content-center border-top-0">
-                              <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
-                              <button type="submit" name="edit_material_keluar" class="btn btn-warning btn-sm">Ubah</button>
-                            </div>
-                          </form>
                         </div>
                       </div>
-                    </div>
-                    <?php if ($data['progress'] != 100) { ?>
                       <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#hapus<?= $data['id_mk'] ?>">
                         <i class="bi bi-trash3"></i> Hapus
                       </button>
@@ -158,7 +169,13 @@ require_once("../templates/views_top.php"); ?>
                           </div>
                         </div>
                       </div>
-                    <?php } ?>
+                    </td>
+                  <?php }
+                } else { ?>
+                  <td class="text-center">
+                    <button type="button" class="btn btn-success btn-sm">
+                      <i class="bi bi-check-all"></i>
+                    </button>
                   </td>
                 <?php } ?>
               </tr>
@@ -195,6 +212,15 @@ require_once("../templates/views_top.php"); ?>
                 <option value="" selected>Pilih Status Keluar</option>
                 <?php foreach ($view_status_keluar as $data_select_status_keluar) { ?>
                   <option value="<?= $data_select_status_keluar['id_sk'] ?>"><?= $data_select_status_keluar['status_keluar'] ?></option>
+                <?php } ?>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="id_sopir">Pengantar</label>
+              <select name="id_sopir" class="form-control" id="id_sopir" required>
+                <option value="" selected>Pilih Pengantar</option>
+                <?php foreach ($view_sopir as $data_select_sopir) { ?>
+                  <option value="<?= $data_select_sopir['id_sopir'] ?>"><?= $data_select_sopir['nama_sopir'] ?></option>
                 <?php } ?>
               </select>
             </div>

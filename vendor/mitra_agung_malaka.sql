@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Waktu pembuatan: 09 Jun 2024 pada 09.38
+-- Waktu pembuatan: 22 Jun 2024 pada 05.45
 -- Versi server: 8.3.0
--- Versi PHP: 8.1.10
+-- Versi PHP: 7.4.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -31,7 +31,7 @@ CREATE TABLE `auth` (
   `id` int NOT NULL,
   `image` varchar(50) DEFAULT NULL,
   `bg` varchar(35) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `auth`
@@ -51,7 +51,7 @@ CREATE TABLE `bahan_material` (
   `nama_material` varchar(50) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `bahan_material`
@@ -83,7 +83,7 @@ CREATE TABLE `kontak` (
   `pesan` text,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `kontak`
@@ -102,6 +102,7 @@ CREATE TABLE `material_keluar` (
   `id_mk` int NOT NULL,
   `id_sm` int DEFAULT NULL,
   `id_sk` int DEFAULT NULL,
+  `id_sopir` int NOT NULL,
   `nama_pemesan` varchar(50) DEFAULT NULL,
   `no_telp` varchar(12) DEFAULT NULL,
   `alamat_pengiriman` varchar(100) DEFAULT NULL,
@@ -109,15 +110,15 @@ CREATE TABLE `material_keluar` (
   `biaya` char(20) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `material_keluar`
 --
 
-INSERT INTO `material_keluar` (`id_mk`, `id_sm`, `id_sk`, `nama_pemesan`, `no_telp`, `alamat_pengiriman`, `jumlah_keluar`, `biaya`, `created_at`, `updated_at`) VALUES
-(7, 1, 3, 'arlan', '0811', 'jl. bajawa', '5', '6000000', '2024-06-09 14:46:13', '2024-06-09 15:11:34'),
-(14, 1, 2, 'aty', '9735', 'liliba', '1', '1200000', '2024-06-09 15:58:59', '2024-06-09 15:58:59');
+INSERT INTO `material_keluar` (`id_mk`, `id_sm`, `id_sk`, `id_sopir`, `nama_pemesan`, `no_telp`, `alamat_pengiriman`, `jumlah_keluar`, `biaya`, `created_at`, `updated_at`) VALUES
+(15, 6, 5, 1, 'arlan', '0811', 'bjw', '5', '5000000', '2024-06-22 11:10:12', '2024-06-22 11:12:04'),
+(16, 6, 3, 2, 'leny', '34653543', 'tes', '10', '10000000', '2024-06-22 11:11:49', '2024-06-22 11:11:49');
 
 -- --------------------------------------------------------
 
@@ -128,7 +129,7 @@ INSERT INTO `material_keluar` (`id_mk`, `id_sm`, `id_sk`, `nama_pemesan`, `no_te
 CREATE TABLE `satuan_barang` (
   `id_sb` int NOT NULL,
   `satuan_barang` varchar(35) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `satuan_barang`
@@ -144,6 +145,26 @@ INSERT INTO `satuan_barang` (`id_sb`, `satuan_barang`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `sopir`
+--
+
+CREATE TABLE `sopir` (
+  `id_sopir` int NOT NULL,
+  `nama_sopir` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `no_plat` varchar(35) COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `sopir`
+--
+
+INSERT INTO `sopir` (`id_sopir`, `nama_sopir`, `no_plat`) VALUES
+(1, 'teo', 'DH 4256 EB'),
+(2, 'Urip', 'DH 4266 EB');
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `status_keluar`
 --
 
@@ -151,7 +172,7 @@ CREATE TABLE `status_keluar` (
   `id_sk` int NOT NULL,
   `status_keluar` varchar(35) DEFAULT NULL,
   `progress` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `status_keluar`
@@ -172,7 +193,7 @@ INSERT INTO `status_keluar` (`id_sk`, `status_keluar`, `progress`) VALUES
 CREATE TABLE `status_stok` (
   `id_ss` int NOT NULL,
   `status` varchar(35) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `status_stok`
@@ -195,18 +216,19 @@ CREATE TABLE `stok_material` (
   `id_bm` int DEFAULT NULL,
   `id_ss` int DEFAULT NULL,
   `id_sb` int DEFAULT NULL,
+  `id_sopir` int NOT NULL,
   `jumlah` char(20) DEFAULT NULL,
   `biaya_satuan` char(20) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `stok_material`
 --
 
-INSERT INTO `stok_material` (`id_sm`, `id_bm`, `id_ss`, `id_sb`, `jumlah`, `biaya_satuan`, `created_at`, `updated_at`) VALUES
-(1, 9, 3, 3, '1', '1200000', '2024-06-09 13:54:42', '2024-06-09 15:58:59');
+INSERT INTO `stok_material` (`id_sm`, `id_bm`, `id_ss`, `id_sb`, `id_sopir`, `jumlah`, `biaya_satuan`, `created_at`, `updated_at`) VALUES
+(6, 7, 2, 3, 1, '85', '1000000', '2024-06-22 11:07:43', '2024-06-22 11:11:49');
 
 -- --------------------------------------------------------
 
@@ -219,7 +241,7 @@ CREATE TABLE `tentang` (
   `deskripsi` text,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `tentang`
@@ -246,7 +268,7 @@ CREATE TABLE `users` (
   `password` varchar(75) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `users`
@@ -281,7 +303,7 @@ CREATE TABLE `user_access_menu` (
   `id_access_menu` int NOT NULL,
   `id_role` int DEFAULT NULL,
   `id_menu` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `user_access_menu`
@@ -292,7 +314,12 @@ INSERT INTO `user_access_menu` (`id_access_menu`, `id_role`, `id_menu`) VALUES
 (2, 1, 2),
 (3, 1, 5),
 (4, 1, 6),
-(5, 1, 7);
+(5, 1, 7),
+(6, 2, 5),
+(7, 2, 6),
+(8, 2, 7),
+(9, 3, 6),
+(10, 4, 6);
 
 -- --------------------------------------------------------
 
@@ -304,7 +331,7 @@ CREATE TABLE `user_access_sub_menu` (
   `id_access_sub_menu` int NOT NULL,
   `id_role` int DEFAULT NULL,
   `id_sub_menu` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `user_access_sub_menu`
@@ -324,7 +351,27 @@ INSERT INTO `user_access_sub_menu` (`id_access_sub_menu`, `id_role`, `id_sub_men
 (11, 1, 11),
 (12, 1, 12),
 (13, 1, 13),
-(14, 1, 14);
+(14, 1, 14),
+(15, 2, 7),
+(16, 2, 8),
+(17, 2, 9),
+(18, 2, 10),
+(19, 2, 12),
+(20, 2, 11),
+(21, 2, 13),
+(22, 2, 14),
+(23, 3, 10),
+(24, 3, 11),
+(25, 3, 12),
+(26, 4, 10),
+(27, 4, 11),
+(28, 4, 12),
+(29, 1, 15),
+(30, 2, 15),
+(31, 3, 15),
+(32, 1, 16),
+(33, 2, 16),
+(34, 3, 16);
 
 -- --------------------------------------------------------
 
@@ -335,7 +382,7 @@ INSERT INTO `user_access_sub_menu` (`id_access_sub_menu`, `id_role`, `id_sub_men
 CREATE TABLE `user_menu` (
   `id_menu` int NOT NULL,
   `menu` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `user_menu`
@@ -357,7 +404,7 @@ INSERT INTO `user_menu` (`id_menu`, `menu`) VALUES
 CREATE TABLE `user_role` (
   `id_role` int NOT NULL,
   `role` varchar(35) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `user_role`
@@ -378,7 +425,7 @@ INSERT INTO `user_role` (`id_role`, `role`) VALUES
 CREATE TABLE `user_status` (
   `id_status` int NOT NULL,
   `status` varchar(35) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `user_status`
@@ -401,7 +448,7 @@ CREATE TABLE `user_sub_menu` (
   `title` varchar(50) DEFAULT NULL,
   `url` varchar(50) DEFAULT NULL,
   `icon` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data untuk tabel `user_sub_menu`
@@ -421,7 +468,9 @@ INSERT INTO `user_sub_menu` (`id_sub_menu`, `id_menu`, `id_active`, `title`, `ur
 (11, 6, 1, 'Stok Material', 'stok-material', 'fas fa-dolly-flatbed'),
 (12, 6, 1, 'Material Keluar', 'material-keluar', 'fas fa-dolly'),
 (13, 7, 1, 'Tentang', 'tentang', 'far fa-address-card'),
-(14, 7, 1, 'Kontak', 'kontak', 'far fa-comment-dots');
+(14, 7, 1, 'Kontak', 'kontak', 'far fa-comment-dots'),
+(15, 6, 1, 'Material Masuk', 'material-masuk', 'fas fa-dolly'),
+(16, 5, 1, 'Data Supir', 'data-supir', 'fas fa-people-carry');
 
 --
 -- Indexes for dumped tables
@@ -451,13 +500,20 @@ ALTER TABLE `kontak`
 ALTER TABLE `material_keluar`
   ADD PRIMARY KEY (`id_mk`),
   ADD KEY `id_sm` (`id_sm`),
-  ADD KEY `id_sk` (`id_sk`);
+  ADD KEY `id_sk` (`id_sk`),
+  ADD KEY `id_sopir` (`id_sopir`);
 
 --
 -- Indeks untuk tabel `satuan_barang`
 --
 ALTER TABLE `satuan_barang`
   ADD PRIMARY KEY (`id_sb`);
+
+--
+-- Indeks untuk tabel `sopir`
+--
+ALTER TABLE `sopir`
+  ADD PRIMARY KEY (`id_sopir`);
 
 --
 -- Indeks untuk tabel `status_keluar`
@@ -478,7 +534,8 @@ ALTER TABLE `stok_material`
   ADD PRIMARY KEY (`id_sm`),
   ADD KEY `id_bm` (`id_bm`),
   ADD KEY `id_ss` (`id_ss`),
-  ADD KEY `id_sb` (`id_sb`);
+  ADD KEY `id_sb` (`id_sb`),
+  ADD KEY `id_sopir` (`id_sopir`);
 
 --
 -- Indeks untuk tabel `tentang`
@@ -562,13 +619,19 @@ ALTER TABLE `kontak`
 -- AUTO_INCREMENT untuk tabel `material_keluar`
 --
 ALTER TABLE `material_keluar`
-  MODIFY `id_mk` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_mk` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT untuk tabel `satuan_barang`
 --
 ALTER TABLE `satuan_barang`
   MODIFY `id_sb` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT untuk tabel `sopir`
+--
+ALTER TABLE `sopir`
+  MODIFY `id_sopir` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `status_keluar`
@@ -586,7 +649,7 @@ ALTER TABLE `status_stok`
 -- AUTO_INCREMENT untuk tabel `stok_material`
 --
 ALTER TABLE `stok_material`
-  MODIFY `id_sm` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_sm` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT untuk tabel `tentang`
@@ -604,13 +667,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT untuk tabel `user_access_menu`
 --
 ALTER TABLE `user_access_menu`
-  MODIFY `id_access_menu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_access_menu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT untuk tabel `user_access_sub_menu`
 --
 ALTER TABLE `user_access_sub_menu`
-  MODIFY `id_access_sub_menu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_access_sub_menu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT untuk tabel `user_menu`
@@ -634,7 +697,7 @@ ALTER TABLE `user_status`
 -- AUTO_INCREMENT untuk tabel `user_sub_menu`
 --
 ALTER TABLE `user_sub_menu`
-  MODIFY `id_sub_menu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_sub_menu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
@@ -645,7 +708,8 @@ ALTER TABLE `user_sub_menu`
 --
 ALTER TABLE `material_keluar`
   ADD CONSTRAINT `material_keluar_ibfk_1` FOREIGN KEY (`id_sm`) REFERENCES `stok_material` (`id_sm`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `material_keluar_ibfk_2` FOREIGN KEY (`id_sk`) REFERENCES `status_keluar` (`id_sk`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `material_keluar_ibfk_2` FOREIGN KEY (`id_sk`) REFERENCES `status_keluar` (`id_sk`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `material_keluar_ibfk_3` FOREIGN KEY (`id_sopir`) REFERENCES `sopir` (`id_sopir`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `stok_material`
@@ -653,7 +717,8 @@ ALTER TABLE `material_keluar`
 ALTER TABLE `stok_material`
   ADD CONSTRAINT `stok_material_ibfk_1` FOREIGN KEY (`id_bm`) REFERENCES `bahan_material` (`id_bm`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `stok_material_ibfk_2` FOREIGN KEY (`id_ss`) REFERENCES `status_stok` (`id_ss`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `stok_material_ibfk_3` FOREIGN KEY (`id_sb`) REFERENCES `satuan_barang` (`id_sb`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `stok_material_ibfk_3` FOREIGN KEY (`id_sb`) REFERENCES `satuan_barang` (`id_sb`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `stok_material_ibfk_4` FOREIGN KEY (`id_sopir`) REFERENCES `sopir` (`id_sopir`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `users`

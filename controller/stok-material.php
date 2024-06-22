@@ -18,18 +18,6 @@ $stok_material = "SELECT stok_material.*, bahan_material.nama_material, status_s
   ORDER BY stok_material.id_sm DESC LIMIT 50
 ";
 $view_stok_material = mysqli_query($conn, $stok_material);
-if (isset($_POST["add_stok_material"])) {
-  $validated_post = array_map(function ($value) use ($conn) {
-    return valid($conn, $value);
-  }, $_POST);
-  if (stok_material($conn, $validated_post, $action = 'insert') > 0) {
-    $message = "Stok material baru berhasil ditambahkan.";
-    $message_type = "success";
-    alert($message, $message_type);
-    header("Location: stok-material");
-    exit();
-  }
-}
 if (isset($_POST["edit_stok_material"])) {
   $validated_post = array_map(function ($value) use ($conn) {
     return valid($conn, $value);

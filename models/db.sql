@@ -93,18 +93,26 @@ CREATE TABLE satuan_barang(
   satuan_barang VARCHAR(35)
 );
 
+CREATE TABLE sopir(
+  id_sopir INT AUTO_INCREMENT PRIMARY KEY,
+  nama_sopir VARCHAR(50),
+  no_plat VARCHAR(35)
+);
+
 CREATE TABLE stok_material(
   id_sm INT AUTO_INCREMENT PRIMARY KEY,
   id_bm INT,
   id_ss INT,
   id_sb INT,
+  id_sopir INT,
   jumlah CHAR(20),
   biaya_satuan CHAR(20),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (id_bm) REFERENCES bahan_material(id_bm) ON UPDATE CASCADE ON DELETE CASCADE,
   FOREIGN KEY (id_ss) REFERENCES status_stok(id_ss) ON UPDATE CASCADE ON DELETE NO ACTION,
-  FOREIGN KEY (id_sb) REFERENCES satuan_barang(id_sb) ON UPDATE CASCADE ON DELETE NO ACTION
+  FOREIGN KEY (id_sb) REFERENCES satuan_barang(id_sb) ON UPDATE CASCADE ON DELETE NO ACTION,
+  FOREIGN KEY (id_sopir) REFERENCES sopir(id_sopir) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE status_keluar(
@@ -117,6 +125,7 @@ CREATE TABLE material_keluar(
   id_mk INT AUTO_INCREMENT PRIMARY KEY,
   id_sm INT,
   id_sk INT,
+  id_sopir INT,
   nama_pemesan VARCHAR(50),
   no_telp VARCHAR(12),
   alamat_pengiriman VARCHAR(100),
@@ -125,7 +134,8 @@ CREATE TABLE material_keluar(
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (id_sm) REFERENCES stok_material(id_sm) ON UPDATE CASCADE ON DELETE CASCADE,
-  FOREIGN KEY (id_sk) REFERENCES status_keluar(id_sk) ON UPDATE CASCADE ON DELETE NO ACTION
+  FOREIGN KEY (id_sk) REFERENCES status_keluar(id_sk) ON UPDATE CASCADE ON DELETE NO ACTION,
+  FOREIGN KEY (id_sopir) REFERENCES sopir(id_sopir) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE kontak (

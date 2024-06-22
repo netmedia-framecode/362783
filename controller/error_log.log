@@ -576,3 +576,14 @@
 [2024-06-16 01:41:48] Error [2]: include(): Failed opening 'db_connect.php' for inclusion (include_path='.;E:/laragon/etc/php/pear') in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\index.php on line 104
 [2024-06-16 01:42:31] Error [2]: include(db_connect.php): failed to open stream: No such file or directory in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\index.php on line 104
 [2024-06-16 01:42:31] Error [2]: include(): Failed opening 'db_connect.php' for inclusion (include_path='.;E:/laragon/etc/php/pear') in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\index.php on line 104
+[2024-06-21 23:43:19] Error [8]: Undefined index: id_sopir in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\material-keluar.php on line 112
+[2024-06-21 23:43:19] Error [8]: Undefined index: id_sopir in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\material-keluar.php on line 114
+[2024-06-21 23:43:19] Error [8]: Undefined index: id_sopir in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\material-keluar.php on line 114
+[2024-06-22 03:00:30] Error [8]: Undefined variable: view_stok_material in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\material-masuk.php on line 46
+[2024-06-22 03:00:30] Error [2]: Invalid argument supplied for foreach() in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\material-masuk.php on line 46
+[2024-06-22 03:07:43] Error [8]: Undefined variable: data_select_status_keluar in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\material-masuk.php on line 79
+[2024-06-22 03:07:43] Error [8]: Trying to access array offset on value of type null in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\material-masuk.php on line 79
+[2024-06-22 03:07:43] Error [8]: Undefined variable: data_select_status_keluar in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\material-masuk.php on line 79
+[2024-06-22 03:07:43] Error [8]: Trying to access array offset on value of type null in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\material-masuk.php on line 79
+[2024-06-22 03:10:12] Error [8]: Undefined index: id_sopir in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\material-keluar.php on line 114
+[2024-06-22 03:10:12] Error [8]: Undefined index: id_sopir in E:\laragon\www\apps\tugas\mitra_agung_malaka\views\material-keluar.php on line 114
