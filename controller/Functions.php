@@ -1274,6 +1274,8 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
                   <th>Alamat Pengiriman</th>
                   <th>Jumlah Keluar</th>
                   <th>Biaya</th>
+                  <th>Jumlah Terkirim</th>
+                  <th>Keterangan</th>
                 </tr>';
     $no = 1;
     while ($row = mysqli_fetch_assoc($result)) {
@@ -1291,6 +1293,8 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
                     <td>' . $row['alamat_pengiriman'] . '</td>
                     <td>' . $row['jumlah_keluar'] . ' ' . $row['satuan_barang'] . '</td>
                     <td>Rp. ' . number_format($row['biaya']) . '</td>
+                    <td>' . $row['jumlah_akhir_keluar'] . '</td>
+                    <td>' . $row['keterangan'] . '</td>
                  </tr>';
     }
     $html .= '</table>';
@@ -1329,6 +1333,8 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
     $sheet->setCellValue('H1', 'Alamat Pengiriman');
     $sheet->setCellValue('I1', 'Jumlah Keluar');
     $sheet->setCellValue('J1', 'Biaya');
+    $sheet->setCellValue('K1', 'Jumlah Terkirim');
+    $sheet->setCellValue('L1', 'Keterangan');
     $row = 2;
     $no = 1;
     while ($row_data = mysqli_fetch_assoc($result)) {
@@ -1342,6 +1348,8 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
       $sheet->setCellValue('H' . $row, $row_data['alamat_pengiriman']);
       $sheet->setCellValue('I' . $row, $row_data['jumlah_keluar'] . ' ' . $row_data['satuan_barang']);
       $sheet->setCellValue('J' . $row, number_format($row_data['biaya']));
+      $sheet->setCellValue('K' . $row, $row_data['jumlah_akhir_keluar']);
+      $sheet->setCellValue('L' . $row, number_format($row_data['keterangan']));
       $row++;
       $no++;
     }
@@ -1421,6 +1429,26 @@ if (isset($_SESSION["project_mitra_agung_malaka"]["users"])) {
       } else if ($data['format_file'] === "excel") {
         exportMKToExcel($conn);
       }
+    }
+
+    if ($action == "checking_data") {
+      $check_data = "SELECT * FROM status_keluar WHERE progress='100' ORDER BY id_sk DESC LIMIT 1";
+      $view_data = mysqli_query($conn, $check_data);
+      if (mysqli_num_rows($view_data) > 0) {
+        $data_sk = mysqli_fetch_assoc($view_data);
+        $id_sk = $data_sk['id_sk'];
+        if ($data['checking'] == 1) {
+          $sql = "UPDATE material_keluar SET id_sk='$id_sk', jumlah_akhir_keluar='$data[jumlah_keluar]' WHERE id_mk='$data[id_mk]'";
+        } else if ($data['checking'] == 2) {
+          $sql = "UPDATE material_keluar SET id_sk='$id_sk', jumlah_akhir_keluar='$data[jumlah_akhir_keluar]', keterangan='$data[keterangan]' WHERE id_mk='$data[id_mk]'";
+        }
+      } else {
+        $message = "Maaf, status material keluar belum diperbarui. Anda belum dapat melakukan pelaporan material keluar.";
+        $message_type = "danger";
+        alert($message, $message_type);
+        return false;
+      }
+      mysqli_query($conn, $sql);
     }
 
     if ($action == "delete") {

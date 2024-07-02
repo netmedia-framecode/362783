@@ -27,6 +27,8 @@ require_once("../templates/views_top.php"); ?>
               <th class="text-center">Alamat Pengiriman</th>
               <th class="text-center">Jumlah Keluar</th>
               <th class="text-center">Biaya</th>
+              <th class="text-center">Jumlah Terkirim</th>
+              <th class="text-center">Keterangan</th>
               <th class="text-center">Tgl Masuk</th>
               <th class="text-center">Tgl Ubah</th>
               <?php if ($id_role == 1 || $id_role == 2 || $id_role == 4) { ?>
@@ -43,6 +45,8 @@ require_once("../templates/views_top.php"); ?>
               <th class="text-center">Alamat Pengiriman</th>
               <th class="text-center">Jumlah Keluar</th>
               <th class="text-center">Biaya</th>
+              <th class="text-center">Jumlah Terkirim</th>
+              <th class="text-center">Keterangan</th>
               <th class="text-center">Tgl Masuk</th>
               <th class="text-center">Tgl Ubah</th>
               <?php if ($id_role == 1 || $id_role == 2 || $id_role == 4) { ?>
@@ -68,13 +72,15 @@ require_once("../templates/views_top.php"); ?>
                 <td><?= $data['alamat_pengiriman'] ?></td>
                 <td><?= $data['jumlah_keluar'] . ' ' . $data['satuan_barang'] ?></td>
                 <td>Rp. <?= number_format($data['biaya']) ?></td>
+                <td><?= $data['jumlah_akhir_keluar'] ?></td>
+                <td><?= $data['keterangan'] ?></td>
                 <td><?php $created_at = date_create($data["created_at"]);
                     echo date_format($created_at, "d M Y"); ?></td>
                 <td><?php $updated_at = date_create($data["updated_at"]);
                     echo date_format($updated_at, "d M Y"); ?></td>
-                <?php if ($data['progress'] != 100) {
-                  if ($id_role == 1 || $id_role == 2 || $id_role == 4) { ?>
-                    <td class="text-center">
+                <?php if ($data['progress'] != 100) { ?>
+                  <td class="text-center">
+                    <?php if ($id_role == 1 || $id_role == 2) { ?>
                       <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#ubah<?= $data['id_mk'] ?>">
                         <i class="bi bi-pencil-square"></i> Ubah
                       </button>
@@ -169,12 +175,83 @@ require_once("../templates/views_top.php"); ?>
                           </div>
                         </div>
                       </div>
-                    </td>
-                  <?php }
-                } else { ?>
+                    <?php }
+                    if ($id_role == 4) { ?>
+                      <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#checking<?= $data['id_mk'] ?>">
+                        <i class="bi bi-check-all"></i> Diproses
+                      </button>
+                      <div class="modal fade" id="checking<?= $data['id_mk'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header border-bottom-0 shadow">
+                              <h5 class="modal-title" id="exampleModalLabel">Cek data <?= $data['nama_material'] ?></h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <form action="" method="post">
+                              <input type="hidden" name="id_mk" value="<?= $data['id_mk'] ?>">
+                              <input type="hidden" name="id_sm" value="<?= $data['id_sm'] ?>">
+                              <input type="hidden" name="nama_material" value="<?= $data['nama_material'] ?>">
+                              <input type="hidden" name="jumlah_keluar" value="<?= $data['jumlah_keluar'] ?>">
+                              <div class="modal-body">
+                                <div class="form-group text-left">
+                                  <label for="">Apakah data material <?= $data['nama_material'] ?> yang dikirim sudah sesuai dengan data material keluar?</label>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="checking" value="1" id="checking1" onclick="toggleVisibility()" checked>
+                                    <label class="form-check-label text-left" for="checking1">
+                                      Sudah sesuai
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="checking" value="2" id="checking2" onclick="toggleVisibility()">
+                                    <label class="form-check-label text-left" for="checking2">
+                                      Belum sesuai
+                                    </label>
+                                  </div>
+                                </div>
+                                <hr>
+                                <div class="data-belum-sesuai" id="dataBelumSesuai">
+                                  <div class="form-group">
+                                    <label for="jumlah_akhir_keluar">Jumlah Material Terkirim</label>
+                                    <input type="number" name="jumlah_akhir_keluar" value="<?= $data['jumlah_keluar'] ?>" class="form-control" id="jumlah_akhir_keluar" min="1" required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="keterangan">Keterangan</label>
+                                    <textarea class="form-control" name="keterangan" id="keterangan" rows="3"></textarea>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="modal-footer justify-content-center border-top-0">
+                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                                <button type="submit" name="checking_material_keluar" class="btn btn-success btn-sm">Selesai</button>
+                              </div>
+                            </form>
+
+                            <script>
+                              function toggleVisibility() {
+                                const dataBelumSesuai = document.getElementById('dataBelumSesuai');
+                                const checking1 = document.getElementById('checking1').checked;
+                                if (checking1) {
+                                  dataBelumSesuai.style.display = 'none';
+                                } else {
+                                  dataBelumSesuai.style.display = 'block';
+                                }
+                              }
+
+                              // Initial call to set the correct visibility on page load
+                              toggleVisibility();
+                            </script>
+
+                          </div>
+                        </div>
+                      </div>
+                    <?php } ?>
+                  </td>
+                <?php } else { ?>
                   <td class="text-center">
                     <button type="button" class="btn btn-success btn-sm">
-                      <i class="bi bi-check-all"></i>
+                      <i class="bi bi-check-all"></i> Selesai
                     </button>
                   </td>
                 <?php } ?>

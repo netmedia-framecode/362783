@@ -52,16 +52,28 @@ if (isset($_POST["edit_material_keluar"])) {
   }
 }
 if (isset($_POST["export_material_keluar"])) {
-	$validated_post = array_map(function ($value) use ($conn) {
-		return valid($conn, $value);
-	}, $_POST);
-	if (material_keluar($conn, $validated_post, $action = 'export') > 0) {
-		$message = "Data material keluar berhasil di export.";
-		$message_type = "success";
-		alert($message, $message_type);
-		header("Location: material-keluar");
-		exit();
-	}
+  $validated_post = array_map(function ($value) use ($conn) {
+    return valid($conn, $value);
+  }, $_POST);
+  if (material_keluar($conn, $validated_post, $action = 'export') > 0) {
+    $message = "Data material keluar berhasil di export.";
+    $message_type = "success";
+    alert($message, $message_type);
+    header("Location: material-keluar");
+    exit();
+  }
+}
+if (isset($_POST["checking_material_keluar"])) {
+  $validated_post = array_map(function ($value) use ($conn) {
+    return valid($conn, $value);
+  }, $_POST);
+  if (material_keluar($conn, $validated_post, $action = 'checking_data') > 0) {
+    $message = "Data material keluar telah selesai di kirim.";
+    $message_type = "success";
+    alert($message, $message_type);
+    header("Location: material-keluar");
+    exit();
+  }
 }
 if (isset($_POST["delete_material_keluar"])) {
   $validated_post = array_map(function ($value) use ($conn) {
