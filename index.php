@@ -22,49 +22,6 @@ require_once("templates/top.php"); ?>
 <div class="section feature" id="tentang">
   <div class="container">
 
-    <!-- <div class="row">
-      <div class="col-sm-12 col-md-12">
-        <div class="row overlap feature-gutter">
-          <div class="col-sm-4 col-md-4 border-right">
-            <div class="feature-box-8">
-              <div class="media">
-                <img src="images/why-thumb-1.jpg" alt="rud" class="img-responsive">
-              </div>
-              <div class="body">
-                <a href="services-detail.html" class="title">Technology &amp; Innovation</a>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed</p>
-                <a href="services-detail.html" class="readmore">READ MORE</a>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-4 col-md-4 border-right">
-            <div class="feature-box-8">
-              <div class="media">
-                <img src="images/why-thumb-2.jpg" alt="rud" class="img-responsive">
-              </div>
-              <div class="body">
-                <a href="services-detail.html" class="title">Our Operations</a>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed</p>
-                <a href="services-detail.html" class="readmore">READ MORE</a>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-4 col-md-4">
-            <div class="feature-box-8">
-              <div class="media">
-                <img src="images/why-thumb-3.jpg" alt="rud" class="img-responsive">
-              </div>
-              <div class="body">
-                <a href="services-detail.html" class="title">The Great Teamwork</a>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit sed</p>
-                <a href="services-detail.html" class="readmore">READ MORE</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
-
     <div class="row">
       <div class="spacer-70"></div>
       <div class="col-sm-5 col-md-5">
@@ -92,54 +49,6 @@ require_once("templates/top.php"); ?>
       </div>
       <div class="clearfix"></div>
       <div class="spacer-70"></div>
-    </div>
-  </div>
-</div>
-
-<div class="section services" id="material">
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12 col-md-12">
-        <h2 class="section-heading center">
-          Daftar Meterial
-        </h2>
-        <p class="text-center" style="margin-top: -40px;">Pilihan bahan material dengan detail yang dapat kamu tentukan sebelum menggunakan jasa kontraktor kami.</p>
-      </div>
-    </div>
-    <div class="row list-services">
-      <div class="table-responsive">
-        <table class="table table-bordered text-dark" id="dataTable" width="100%" cellspacing="0">
-          <thead>
-            <tr>
-              <th class="text-center">Nama Material</th>
-              <th class="text-center">Status</th>
-              <th class="text-center">Jumlah Stok</th>
-              <th class="text-center">Satuan</th>
-              <th class="text-center">Biaya (per satuan)</th>
-            </tr>
-          </thead>
-          <tfoot>
-            <tr>
-              <th class="text-center">Nama Material</th>
-              <th class="text-center">Status</th>
-              <th class="text-center">Jumlah Stok</th>
-              <th class="text-center">Satuan</th>
-              <th class="text-center">Biaya (per satuan)</th>
-            </tr>
-          </tfoot>
-          <tbody>
-            <?php foreach ($view_stok_material as $data) { ?>
-              <tr>
-                <td><?= $data['nama_material'] ?></td>
-                <td><?= $data['status'] ?></td>
-                <td><?= $data['jumlah'] ?></td>
-                <td><?= $data['satuan_barang'] ?></td>
-                <td>Rp. <?= number_format($data['biaya_satuan']) ?></td>
-              </tr>
-            <?php } ?>
-          </tbody>
-        </table>
-      </div>
     </div>
   </div>
 </div>

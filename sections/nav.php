@@ -47,7 +47,6 @@
           <ul class="nav navbar-nav navbar-right">
             <li><a href="./">Beranda</a></li>
             <li><a href="#tentang">Tentang Perusahaan</a></li>
-            <li><a href="#material">Daftar Material</a></li>
             <li><a href="#kontak">Kontak</a></li>
 
           </ul>
